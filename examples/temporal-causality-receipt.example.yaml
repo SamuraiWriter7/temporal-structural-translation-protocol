@@ -1,0 +1,299 @@
+schema_version: "0.5.0"
+record_type: temporal_causality_receipt
+
+causality_receipt_id: tcr-2026-0001
+workspace_id: temporal-workspace-alpha
+
+subject:
+  subject_id: temporal-causality-audit-wing
+  subject_type: wing
+  role: temporal_causality_assessment
+  implementation: model-independent
+
+claim_scope:
+  scope_type: cross_agent_lifecycle
+
+  outcome_refs:
+    - verifier-conflict-check-004
+    - verifier-request-alpha
+
+  temporal_range:
+    start_ref: tsr-finder-0010
+    end_ref: tsr-verifier-0004
+    logical_range: "F:10->F:12 => V:event-004"
+
+  state_record_refs:
+    - tsr-finder-0010
+    - tsr-finder-0011
+    - tsr-finder-0012
+    - tsr-verifier-0004
+
+  transition_map_refs:
+    - stm-finder-0010-0011
+    - stm-finder-0011-0012
+
+  precedence_graph_refs:
+    - spg-finder-0001
+
+  translation_record_refs:
+    - catt-2026-0001
+
+  description: >
+    Assessment of whether Finder Wing discoveries and the subsequent
+    temporal translation package contributed to the formation of specific
+    Verifier Wing verification tasks.
+
+causal_claims:
+  - claim_id: claim-001
+
+    candidate_cause_refs:
+      - unresolved-source-conflict-beta
+      - handoff-package-finder-verifier-004
+
+    outcome_refs:
+      - verifier-conflict-check-004
+
+    claim_type: contributory
+    claim_strength: strong
+    status: supported
+
+    statement: >
+      The unresolved source conflict identified by Finder Wing and
+      preserved through the accepted translation package contributed to
+      the creation of the Verifier conflict-check task.
+
+    mechanism_summary: >
+      Finder Wing identified an unresolved conflict, preserved its
+      unresolved status through temporal translation, and the accepted
+      handoff package mapped that item into a Verifier conflict-check task.
+
+    scope_notes: >
+      This claim is limited to contribution to task formation. It does not
+      claim that the Finder conflict alone was necessary or sufficient for
+      all later Verifier decisions.
+
+  - claim_id: claim-002
+
+    candidate_cause_refs:
+      - continuity-verify-alpha
+      - handoff-package-finder-verifier-004
+
+    outcome_refs:
+      - verifier-request-alpha
+
+    claim_type: enabling
+    claim_strength: moderate
+    status: partially_supported
+
+    statement: >
+      The transferred verification intent enabled the explicit formation
+      of a Verifier request for candidate Alpha.
+
+    mechanism_summary: >
+      A Finder continuity candidate marked for verification was translated
+      into an explicit Verifier request during cross-agent handoff.
+
+    scope_notes: >
+      The receipt does not establish that the Verifier could not have
+      generated the same request independently.
+
+evidence_binding:
+  overall_completeness: substantial
+
+  bindings:
+    - binding_id: binding-001
+      claim_id: claim-001
+      evidence_type: state_evidence
+
+      evidence_refs:
+        - tsr-finder-0012
+
+      support_direction: supports
+      relevance: direct
+      confidence: 0.92
+
+      description: >
+        The Finder state record contains the unresolved source conflict
+        before handoff.
+
+    - binding_id: binding-002
+      claim_id: claim-001
+      evidence_type: precedence_evidence
+
+      evidence_refs:
+        - spg-finder-0001
+
+      support_direction: supports
+      relevance: direct
+      confidence: 0.9
+
+      description: >
+        The precedence graph records that conflict identification preceded
+        creation of the verification request.
+
+    - binding_id: binding-003
+      claim_id: claim-001
+      evidence_type: translation_evidence
+
+      evidence_refs:
+        - catt-2026-0001
+
+      support_direction: supports
+      relevance: direct
+      confidence: 0.95
+
+      description: >
+        The cross-agent translation record preserves the unresolved status
+        and maps the source conflict to the target verification task.
+
+    - binding_id: binding-004
+      claim_id: claim-002
+      evidence_type: translation_evidence
+
+      evidence_refs:
+        - catt-2026-0001
+
+      support_direction: supports
+      relevance: direct
+      confidence: 0.88
+
+      description: >
+        The translation record maps the source verification intent into the
+        target Verifier request.
+
+    - binding_id: binding-005
+      claim_id: claim-002
+      evidence_type: precedence_evidence
+
+      evidence_refs:
+        - spg-finder-0001
+
+      support_direction: supports
+      relevance: indirect
+      confidence: 0.76
+
+      description: >
+        The relevant Finder structures preceded the target verification
+        request, but precedence alone does not establish necessity.
+
+alternative_explanations:
+  - alternative_id: alternative-001
+
+    statement: >
+      Verifier Wing may have independently generated a conflict-check task
+      from direct evidence inspection even without the Finder handoff.
+
+    candidate_factor_refs:
+      - verifier-independent-analysis-capability
+
+    plausibility: moderate
+    status: open
+
+    evidence_refs:
+      - verifier-capability-profile
+
+  - alternative_id: alternative-002
+
+    statement: >
+      Human review instructions may have independently required conflict
+      verification regardless of the Finder continuity path.
+
+    candidate_factor_refs:
+      - verifier-human-gate-condition-004
+
+    plausibility: low
+    status: partially_addressed
+
+    evidence_refs:
+      - human-gate-policy-004
+
+counterevidence:
+  - counterevidence_id: counter-001
+    claim_id: claim-002
+
+    description: >
+      The Verifier role definition permits independent generation of
+      verification requests from received evidence, reducing confidence
+      that the transferred verification intent was necessary.
+
+    severity: moderate
+    resolution_status: accepted_limitation
+
+    evidence_refs:
+      - verifier-role-definition
+
+    resolution_notes: >
+      Claim-002 is retained as an enabling contribution claim and is not
+      elevated to a necessary-cause claim.
+
+scope_boundary:
+  permitted_claims:
+    - >
+      Finder conflict identification contributed to formation of the
+      Verifier conflict-check task.
+    - >
+      The translation package preserved unresolved status and evidence
+      linkage across the handoff.
+    - >
+      The verification intent may have enabled formation of the target
+      verification request.
+
+  prohibited_inferences:
+    - precedence_implies_causation
+    - translation_implies_influence
+    - contribution_implies_necessity
+    - contribution_implies_sufficiency
+    - local_claim_implies_global_claim
+    - single_path_implies_exclusive_path
+    - absence_of_counterevidence_implies_proof
+
+  generalization_status: local_only
+
+  limitations:
+    - >
+      The receipt covers one bounded Finder-to-Verifier handoff lifecycle.
+    - >
+      No intervention test was performed.
+    - >
+      No counterfactual replay was performed.
+    - >
+      Independent Verifier reasoning remains a plausible alternative path.
+
+causal_assessment:
+  overall_status: moderately_supported
+  confidence: 0.84
+  evidence_sufficiency: adequate
+  alternative_explanations_status: partially_addressed
+
+  assessment_summary: >
+    The available state, precedence, and translation records provide strong
+    support for a bounded contributory claim regarding the Finder conflict
+    and the Verifier conflict-check task. Evidence for necessity or
+    sufficiency is not available. The enabling claim for the Alpha
+    verification request remains partially supported because independent
+    Verifier generation is plausible.
+
+  recommended_next_action: accept_bounded_claim
+
+review:
+  human_review_required: true
+  review_status: pending
+  reviewer_role: human_causality_reviewer
+
+  review_notes: >
+    Review should confirm that no stronger causal wording is introduced
+    beyond the bounded contributory and enabling claims.
+
+audit:
+  created_by: temporal-causality-audit-wing
+  created_at: "2026-07-10T18:41:38Z"
+  receipt_finality: provisional
+
+  trace_refs:
+    - trace-temporal-causality-v0.5-001
+    - trace-finder-candidates-004
+    - trace-source-conflict-beta
+
+  notes: >
+    Initial Temporal Causality Receipt example completing the first
+    protocol arc.
