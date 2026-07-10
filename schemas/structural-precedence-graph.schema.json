@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/structural-precedence-graph.schema.json",
+  "title": "Structural Precedence Graph",
+  "description": "A model-independent graph for representing temporal and structural precedence relations without treating precedence alone as proof of causality.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "precedence_graph_id",
+    "workspace_id",
+    "subject",
+    "graph_scope",
+    "nodes",
+    "edges",
+    "path_observations",
+    "graph_summary",
+    "observation",
+    "audit"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.3.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "structural_precedence_graph"
+    },
+    "precedence_graph_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "graph_scope": {
+      "$ref": "#/$defs/graphScope"
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "path_observations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathObservation"
+      }
+    },
+    "graph_summary": {
+      "$ref": "#/$defs/graphSummary"
+    },
+    "observation": {
+      "$ref": "#/$defs/observation"
+    },
+    "audit": {
+      "$ref": "#/$defs/audit"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Optional implementation-specific extensions.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "subject_type"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_type": {
+          "type": "string",
+          "enum": [
+            "model",
+            "agent",
+            "wing",
+            "system",
+            "human_ai_loop",
+            "multi_agent_group",
+            "cross_system",
+            "other"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation": {
+          "type": "string"
+        }
+      }
+    },
+    "graphScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_type",
+        "source_state_record_ids",
+        "target_state_record_ids"
+      ],
+      "properties": {
+        "scope_type": {
+          "type": "string",
+          "enum": [
+            "single_transition",
+            "multi_transition",
+            "lifecycle_segment",
+            "cross_agent",
+            "cross_system",
+            "other"
+          ]
+        },
+        "source_state_record_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "target_state_record_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "transition_map_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "sequence_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sequence_end": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_id",
+        "structure_id",
+        "node_type",
+        "temporal_position",
+        "label"
+      ],
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "node_type": {
+          "type": "string",
+          "enum": [
+            "origin",
+            "active_structure",
+            "unresolved_item",
+            "transition_result",
+            "trace",
+            "constraint",
+            "context",
+            "handoff_input",
+            "handoff_output",
+            "other"
+          ]
+        },
+        "temporal_position": {
+          "$ref": "#/$defs/temporalPosition"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "state_record_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "trace_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "origin_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "temporalPosition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence_index"
+      ],
+      "properties": {
+        "sequence_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "logical_time": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "local_clock_id": {
+          "type": "string",
+          "description": "Optional clock identifier for future cross-agent alignment."
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edge_id",
+        "source_node_id",
+        "target_node_id",
+        "relation_type",
+        "precedence_basis",
+        "confidence"
+      ],
+      "properties": {
+        "edge_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relation_type": {
+          "type": "string",
+          "enum": [
+            "temporally_precedes",
+            "structurally_prepares",
+            "contextually_frames",
+            "constrains",
+            "enables",
+            "is_inherited_by",
+            "is_refined_into",
+            "is_reinterpreted_as",
+            "remains_unresolved_before",
+            "is_handed_forward_to",
+            "other"
+          ]
+        },
+        "precedence_basis": {
+          "type": "string",
+          "enum": [
+            "state_sequence",
+            "transition_map",
+            "trace_sequence",
+            "declared_dependency",
+            "handoff_record",
+            "external_evidence",
+            "hybrid",
+            "unknown"
+          ]
+        },
+        "strength": {
+          "type": "string",
+          "enum": [
+            "weak",
+            "moderate",
+            "strong",
+            "unknown"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "causal_status": {
+          "type": "string",
+          "enum": [
+            "not_claimed",
+            "candidate",
+            "requires_review"
+          ],
+          "default": "not_claimed",
+          "description": "Precedence does not establish causality. This field only indicates whether later causal review may be warranted."
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "pathObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path_id",
+        "node_path",
+        "path_type",
+        "description"
+      ],
+      "properties": {
+        "path_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "node_path": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string"
+          }
+        },
+        "path_type": {
+          "type": "string",
+          "enum": [
+            "developmental",
+            "constraint",
+            "inheritance",
+            "translation",
+            "unresolved_continuity",
+            "mixed",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "graphSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary_precedence_findings",
+        "unresolved_precedence_questions"
+      ],
+      "properties": {
+        "primary_precedence_findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unresolved_precedence_questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "candidate_causal_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "References to paths that may warrant later causal review. Inclusion does not assert causality."
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "confidence"
+      ],
+      "properties": {
+        "basis": {
+          "type": "string",
+          "enum": [
+            "state_sequence_analysis",
+            "transition_analysis",
+            "trace_analysis",
+            "dependency_analysis",
+            "hybrid"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "construction_method": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "rule_based",
+            "model_assisted",
+            "automated",
+            "hybrid"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "created_by",
+        "human_review_required"
+      ],
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "pending",
+            "reviewed",
+            "rejected"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
