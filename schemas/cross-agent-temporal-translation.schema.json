@@ -1,0 +1,887 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/cross-agent-temporal-translation.schema.json",
+  "title": "Cross-Agent Temporal Translation",
+  "description": "A model-independent record for translating structural and temporal continuity from one agent context into another without assuming identical representations, synchronized clocks, or causal equivalence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "translation_record_id",
+    "workspace_id",
+    "source_context",
+    "target_context",
+    "translation_contract",
+    "temporal_alignment",
+    "structural_mappings",
+    "continuity_transfer",
+    "translation_losses",
+    "handoff_package",
+    "observation",
+    "audit"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.4.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "cross_agent_temporal_translation"
+    },
+    "translation_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_context": {
+      "$ref": "#/$defs/agentContext"
+    },
+    "target_context": {
+      "$ref": "#/$defs/agentContext"
+    },
+    "translation_contract": {
+      "$ref": "#/$defs/translationContract"
+    },
+    "temporal_alignment": {
+      "$ref": "#/$defs/temporalAlignment"
+    },
+    "structural_mappings": {
+      "$ref": "#/$defs/structuralMappings"
+    },
+    "continuity_transfer": {
+      "$ref": "#/$defs/continuityTransfer"
+    },
+    "translation_losses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/translationLoss"
+      }
+    },
+    "handoff_package": {
+      "$ref": "#/$defs/handoffPackage"
+    },
+    "observation": {
+      "$ref": "#/$defs/observation"
+    },
+    "audit": {
+      "$ref": "#/$defs/audit"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Optional implementation-specific extensions.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "agentContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "agent_type",
+        "role",
+        "clock_context"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agent_type": {
+          "type": "string",
+          "enum": [
+            "model",
+            "agent",
+            "wing",
+            "human_ai_loop",
+            "multi_agent_group",
+            "external_system",
+            "other"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation": {
+          "type": "string"
+        },
+        "representation_profile": {
+          "type": "string",
+          "description": "Optional identifier or description of the agent's representational interface."
+        },
+        "clock_context": {
+          "$ref": "#/$defs/clockContext"
+        },
+        "state_record_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "transition_map_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "precedence_graph_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "clockContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock_id",
+        "clock_type"
+      ],
+      "properties": {
+        "clock_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clock_type": {
+          "type": "string",
+          "enum": [
+            "wall_clock",
+            "logical_clock",
+            "sequence_clock",
+            "event_clock",
+            "hybrid",
+            "unknown"
+          ]
+        },
+        "current_position": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "translationContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "translation_mode",
+        "required_preservation",
+        "allowed_transformations",
+        "prohibited_transformations"
+      ],
+      "properties": {
+        "translation_mode": {
+          "type": "string",
+          "enum": [
+            "semantic",
+            "functional",
+            "structural",
+            "temporal",
+            "hybrid"
+          ]
+        },
+        "required_preservation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "meaning",
+              "function",
+              "uncertainty",
+              "unresolved_status",
+              "precedence",
+              "constraints",
+              "evidence_links",
+              "human_review_status"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "allowed_transformations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "compression",
+              "expansion",
+              "summarization",
+              "specialization",
+              "generalization",
+              "role_adaptation",
+              "representation_change",
+              "temporal_relabeling",
+              "priority_reordering",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "prohibited_transformations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "origin_removal",
+              "uncertainty_suppression",
+              "evidence_detachment",
+              "precedence_inversion",
+              "unresolved_to_resolved_without_evidence",
+              "causal_claim_inflation",
+              "human_gate_bypass",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "temporalAlignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alignment_mode",
+        "alignment_pairs",
+        "ordering_preservation"
+      ],
+      "properties": {
+        "alignment_mode": {
+          "type": "string",
+          "enum": [
+            "direct",
+            "relative",
+            "event_based",
+            "sequence_based",
+            "partial",
+            "unknown"
+          ]
+        },
+        "alignment_pairs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/alignmentPair"
+          }
+        },
+        "ordering_preservation": {
+          "type": "string",
+          "enum": [
+            "fully_preserved",
+            "partially_preserved",
+            "reordered_by_contract",
+            "not_preserved",
+            "unknown"
+          ]
+        },
+        "alignment_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "alignmentPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pair_id",
+        "source_position",
+        "target_position",
+        "alignment_relation"
+      ],
+      "properties": {
+        "pair_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_position": {
+          "$ref": "#/$defs/temporalPositionReference"
+        },
+        "target_position": {
+          "$ref": "#/$defs/temporalPositionReference"
+        },
+        "alignment_relation": {
+          "type": "string",
+          "enum": [
+            "corresponds_to",
+            "precedes",
+            "follows",
+            "overlaps",
+            "contains",
+            "derived_alignment",
+            "unknown"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "temporalPositionReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock_id",
+        "position"
+      ],
+      "properties": {
+        "clock_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state_record_id": {
+          "type": "string"
+        },
+        "sequence_index": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "structuralMappings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state_mappings",
+        "structure_mappings",
+        "precedence_mappings"
+      ],
+      "properties": {
+        "state_mappings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stateMapping"
+          }
+        },
+        "structure_mappings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/structureMapping"
+          }
+        },
+        "precedence_mappings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/precedenceMapping"
+          }
+        }
+      }
+    },
+    "stateMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mapping_id",
+        "source_state_record_ids",
+        "target_state_record_ids",
+        "mapping_type",
+        "preservation_status"
+      ],
+      "properties": {
+        "mapping_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_state_record_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "target_state_record_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "mapping_type": {
+          "type": "string",
+          "enum": [
+            "one_to_one",
+            "one_to_many",
+            "many_to_one",
+            "many_to_many",
+            "partial"
+          ]
+        },
+        "preservation_status": {
+          "$ref": "#/$defs/preservationStatus"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "structureMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mapping_id",
+        "source_structure_ids",
+        "target_structure_ids",
+        "translation_operation",
+        "preservation_status"
+      ],
+      "properties": {
+        "mapping_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_structure_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "target_structure_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "translation_operation": {
+          "type": "string",
+          "enum": [
+            "direct_transfer",
+            "summarization",
+            "specialization",
+            "generalization",
+            "role_adaptation",
+            "representation_change",
+            "priority_reordering",
+            "split",
+            "merge",
+            "other"
+          ]
+        },
+        "preservation_status": {
+          "$ref": "#/$defs/preservationStatus"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "precedenceMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mapping_id",
+        "source_edge_ids",
+        "target_relation_refs",
+        "preservation_status"
+      ],
+      "properties": {
+        "mapping_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_edge_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "target_relation_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "preservation_status": {
+          "$ref": "#/$defs/preservationStatus"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "preservationStatus": {
+      "type": "string",
+      "enum": [
+        "identity_preserved",
+        "meaning_preserved",
+        "function_preserved",
+        "partially_preserved",
+        "intentionally_transformed",
+        "not_preserved",
+        "unknown"
+      ]
+    },
+    "continuityTransfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transferred_items",
+        "deferred_items",
+        "rejected_items"
+      ],
+      "properties": {
+        "transferred_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/continuityItem"
+          }
+        },
+        "deferred_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/deferredItem"
+          }
+        },
+        "rejected_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rejectedItem"
+          }
+        }
+      }
+    },
+    "continuityItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transfer_id",
+        "source_item_id",
+        "target_item_id",
+        "transfer_type",
+        "status_preservation"
+      ],
+      "properties": {
+        "transfer_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_item_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_item_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transfer_type": {
+          "type": "string",
+          "enum": [
+            "unresolved_item",
+            "continuity_candidate",
+            "constraint",
+            "verification_request",
+            "human_review_request",
+            "other"
+          ]
+        },
+        "status_preservation": {
+          "type": "string",
+          "enum": [
+            "preserved",
+            "translated",
+            "escalated",
+            "reduced",
+            "unknown"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "deferredItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_item_id",
+        "reason"
+      ],
+      "properties": {
+        "source_item_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recommended_target_role": {
+          "type": "string"
+        }
+      }
+    },
+    "rejectedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_item_id",
+        "reason"
+      ],
+      "properties": {
+        "source_item_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_ref": {
+          "type": "string"
+        }
+      }
+    },
+    "translationLoss": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loss_id",
+        "loss_type",
+        "severity",
+        "description",
+        "accepted"
+      ],
+      "properties": {
+        "loss_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "loss_type": {
+          "type": "string",
+          "enum": [
+            "semantic_detail",
+            "temporal_precision",
+            "structural_relation",
+            "uncertainty_detail",
+            "evidence_resolution",
+            "role_context",
+            "priority_information",
+            "other"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "negligible",
+            "low",
+            "moderate",
+            "high",
+            "critical"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "mitigation": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "handoffPackage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package_id",
+        "delivery_status",
+        "included_refs",
+        "acceptance_required"
+      ],
+      "properties": {
+        "package_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delivery_status": {
+          "type": "string",
+          "enum": [
+            "prepared",
+            "delivered",
+            "accepted",
+            "partially_accepted",
+            "rejected",
+            "unknown"
+          ]
+        },
+        "included_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "acceptance_required": {
+          "type": "boolean"
+        },
+        "accepted_by": {
+          "type": "string"
+        },
+        "accepted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "confidence"
+      ],
+      "properties": {
+        "basis": {
+          "type": "string",
+          "enum": [
+            "translation_record",
+            "state_comparison",
+            "handoff_evidence",
+            "trace_analysis",
+            "hybrid"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "translation_method": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "rule_based",
+            "model_assisted",
+            "automated",
+            "hybrid"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "created_by",
+        "human_review_required"
+      ],
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "pending",
+            "reviewed",
+            "rejected"
+          ]
+        },
+        "causal_claims_permitted": {
+          "type": "boolean",
+          "const": false
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
