@@ -1,0 +1,415 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/temporal-state-record.schema.json",
+  "title": "Temporal State Record",
+  "description": "A model-independent record for representing an observable or externally representable structural state at a specific temporal position.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "state_record_id",
+    "workspace_id",
+    "subject",
+    "observed_at",
+    "temporal_context",
+    "state_snapshot",
+    "observation",
+    "audit"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "temporal_state_record"
+    },
+    "state_record_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this temporal state record."
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier for the temporal workspace, process, session, or lifecycle to which this state belongs."
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp at which the represented state was observed or recorded."
+    },
+    "temporal_context": {
+      "$ref": "#/$defs/temporalContext"
+    },
+    "state_snapshot": {
+      "$ref": "#/$defs/stateSnapshot"
+    },
+    "observation": {
+      "$ref": "#/$defs/observation"
+    },
+    "audit": {
+      "$ref": "#/$defs/audit"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Optional implementation-specific extensions.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "subject_type"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_type": {
+          "type": "string",
+          "enum": [
+            "model",
+            "agent",
+            "wing",
+            "system",
+            "human_ai_loop",
+            "other"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation": {
+          "type": "string",
+          "description": "Optional model, runtime, service, or implementation identifier."
+        }
+      }
+    },
+    "temporalContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence_index"
+      ],
+      "properties": {
+        "sequence_index": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Monotonic position of this state within the workspace lifecycle."
+        },
+        "logical_time": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional implementation-defined logical time label."
+        },
+        "previous_state_record_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identifier of the immediately preceding state record when known."
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "initialization",
+            "exploration",
+            "analysis",
+            "translation",
+            "verification",
+            "execution",
+            "reflection",
+            "handoff",
+            "other"
+          ]
+        }
+      }
+    },
+    "stateSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "active_structures",
+        "unresolved_items",
+        "dependencies",
+        "continuity_candidates"
+      ],
+      "properties": {
+        "active_structures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stateUnit"
+          }
+        },
+        "unresolved_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unresolvedItem"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          }
+        },
+        "continuity_candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/continuityCandidate"
+          }
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable summary of the represented structural state."
+        }
+      }
+    },
+    "stateUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "structure_id",
+        "label",
+        "summary",
+        "activation",
+        "change_readiness"
+      ],
+      "properties": {
+        "structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "activation": {
+          "type": "string",
+          "enum": [
+            "primary",
+            "secondary",
+            "background",
+            "uncertain"
+          ]
+        },
+        "change_readiness": {
+          "type": "string",
+          "enum": [
+            "stable",
+            "evolving",
+            "unstable",
+            "unknown"
+          ]
+        },
+        "origin_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "trace_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "unresolvedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item_id",
+        "description",
+        "status"
+      ],
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "blocked",
+            "deferred",
+            "conflicting",
+            "unknown"
+          ]
+        },
+        "related_structure_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "blocking_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependency_id",
+        "source_structure_id",
+        "target_structure_id",
+        "relation"
+      ],
+      "properties": {
+        "dependency_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relation": {
+          "type": "string",
+          "enum": [
+            "supports",
+            "constrains",
+            "requires",
+            "conflicts_with",
+            "refines",
+            "derived_from",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "continuityCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "structure_id",
+        "continuity_intent"
+      ],
+      "properties": {
+        "candidate_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "continuity_intent": {
+          "type": "string",
+          "enum": [
+            "preserve",
+            "revisit",
+            "transform",
+            "verify",
+            "handoff",
+            "retire"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "confidence"
+      ],
+      "properties": {
+        "basis": {
+          "type": "string",
+          "enum": [
+            "self_report",
+            "trace_inference",
+            "telemetry",
+            "external_observation",
+            "hybrid"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "created_by",
+        "human_review_required"
+      ],
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "pending",
+            "reviewed",
+            "rejected"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
