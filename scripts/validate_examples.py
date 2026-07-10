@@ -13,42 +13,61 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).resolve().parent.parent
 
+
 VALIDATION_TARGETS = [
     {
         "name": "Temporal State Record",
         "schema": ROOT / "schemas" / "temporal-state-record.schema.json",
         "example": ROOT / "examples" / "temporal-state-record.example.yaml",
-    }
+    },
+    {
+        "name": "State Transition Map",
+        "schema": ROOT / "schemas" / "state-transition-map.schema.json",
+        "example": ROOT / "examples" / "state-transition-map.example.yaml",
+    },
 ]
 
 
 def load_json(path: Path) -> dict[str, Any]:
     try:
         with path.open("r", encoding="utf-8") as file:
-            return json.load(file)
-    except FileNotFoundError:
-        raise RuntimeError(f"File not found: {path}")
+            data = json.load(file)
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"File not found: {path}") from exc
     except json.JSONDecodeError as exc:
         raise RuntimeError(
-            f"Invalid JSON in {path}: line {exc.lineno}, column {exc.colno}"
+            f"Invalid JSON in {path}: "
+            f"line {exc.lineno}, column {exc.colno}"
         ) from exc
+
+    if not isinstance(data, dict):
+        raise RuntimeError(
+            f"Expected JSON object at root of schema: {path}"
+        )
+
+    return data
 
 
 def load_yaml(path: Path) -> Any:
     try:
         with path.open("r", encoding="utf-8") as file:
             return yaml.safe_load(file)
-    except FileNotFoundError:
-        raise RuntimeError(f"File not found: {path}")
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"File not found: {path}") from exc
     except yaml.YAMLError as exc:
-        raise RuntimeError(f"Invalid YAML in {path}: {exc}") from exc
+        raise RuntimeError(
+            f"Invalid YAML in {path}: {exc}"
+        ) from exc
 
 
 def format_error_path(error: Any) -> str:
     if not error.absolute_path:
         return "<root>"
 
-    return ".".join(str(part) for part in error.absolute_path)
+    return ".".join(
+        str(part)
+        for part in error.absolute_path
+    )
 
 
 def validate_target(
@@ -72,7 +91,10 @@ def validate_target(
 
     errors = sorted(
         validator.iter_errors(example),
-        key=lambda error: list(error.absolute_path),
+        key=lambda error: (
+            list(error.absolute_path),
+            error.message,
+        ),
     )
 
     if errors:
@@ -87,7 +109,10 @@ def validate_target(
 
 
 def main() -> int:
-    print("=== Temporal Structural Translation Protocol Validation ===")
+    print(
+        "=== Temporal Structural Translation "
+        "Protocol Validation ==="
+    )
     print()
 
     all_valid = True
