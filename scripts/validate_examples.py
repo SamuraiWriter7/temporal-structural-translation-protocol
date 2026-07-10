@@ -25,6 +25,15 @@ VALIDATION_TARGETS = [
         "schema": ROOT / "schemas" / "state-transition-map.schema.json",
         "example": ROOT / "examples" / "state-transition-map.example.yaml",
     },
+    {
+        "name": "Structural Precedence Graph",
+        "schema": ROOT
+        / "schemas"
+        / "structural-precedence-graph.schema.json",
+        "example": ROOT
+        / "examples"
+        / "structural-precedence-graph.example.yaml",
+    },
 ]
 
 
