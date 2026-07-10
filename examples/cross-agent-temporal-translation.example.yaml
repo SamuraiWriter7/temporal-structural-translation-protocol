@@ -1,0 +1,365 @@
+schema_version: "0.4.0"
+record_type: cross_agent_temporal_translation
+
+translation_record_id: catt-2026-0001
+workspace_id: temporal-workspace-alpha
+
+source_context:
+  agent_id: finder-wing
+  agent_type: wing
+  role: evidence_discovery
+  implementation: model-independent-finder
+  representation_profile: candidate-oriented-structural-records
+
+  clock_context:
+    clock_id: finder-clock
+    clock_type: sequence_clock
+    current_position: "F:12"
+    description: >
+      Finder Wing uses a local sequence clock based on completed
+      discovery cycles.
+
+  state_record_refs:
+    - tsr-finder-0010
+    - tsr-finder-0011
+    - tsr-finder-0012
+
+  transition_map_refs:
+    - stm-finder-0010-0011
+    - stm-finder-0011-0012
+
+  precedence_graph_refs:
+    - spg-finder-0001
+
+target_context:
+  agent_id: verifier-wing
+  agent_type: wing
+  role: evidence_verification
+  implementation: model-independent-verifier
+  representation_profile: claim-evidence-verification-records
+
+  clock_context:
+    clock_id: verifier-clock
+    clock_type: event_clock
+    current_position: "V:event-004"
+    description: >
+      Verifier Wing advances its local clock when a verification package
+      is accepted.
+
+  state_record_refs:
+    - tsr-verifier-0004
+
+translation_contract:
+  translation_mode: hybrid
+
+  required_preservation:
+    - origin
+    - meaning
+    - uncertainty
+    - unresolved_status
+    - precedence
+    - evidence_links
+    - human_review_status
+
+  allowed_transformations:
+    - summarization
+    - specialization
+    - role_adaptation
+    - representation_change
+    - priority_reordering
+
+  prohibited_transformations:
+    - origin_removal
+    - uncertainty_suppression
+    - evidence_detachment
+    - precedence_inversion
+    - unresolved_to_resolved_without_evidence
+    - causal_claim_inflation
+    - human_gate_bypass
+
+  description: >
+    Finder-oriented discovery structures may be translated into
+    verifier-oriented claim and evidence structures, provided uncertainty,
+    evidence linkage, unresolved status, and precedence relations remain
+    explicitly represented.
+
+temporal_alignment:
+  alignment_mode: event_based
+  ordering_preservation: partially_preserved
+  alignment_confidence: 0.91
+
+  alignment_pairs:
+    - pair_id: align-001
+
+      source_position:
+        clock_id: finder-clock
+        position: "F:10"
+        state_record_id: tsr-finder-0010
+        sequence_index: 10
+
+      target_position:
+        clock_id: verifier-clock
+        position: "V:event-004"
+        state_record_id: tsr-verifier-0004
+        sequence_index: 4
+
+      alignment_relation: precedes
+      confidence: 0.96
+
+      evidence_refs:
+        - handoff-request-004
+
+    - pair_id: align-002
+
+      source_position:
+        clock_id: finder-clock
+        position: "F:12"
+        state_record_id: tsr-finder-0012
+        sequence_index: 12
+
+      target_position:
+        clock_id: verifier-clock
+        position: "V:event-004"
+        state_record_id: tsr-verifier-0004
+        sequence_index: 4
+
+      alignment_relation: corresponds_to
+      confidence: 0.89
+
+      evidence_refs:
+        - handoff-package-finder-verifier-004
+
+  limitations:
+    - >
+      Finder and Verifier use different local clock semantics.
+    - >
+      Correspondence indicates handoff alignment and not clock equality.
+    - >
+      Some Finder micro-transitions are intentionally compressed.
+
+structural_mappings:
+  state_mappings:
+    - mapping_id: state-map-001
+
+      source_state_record_ids:
+        - tsr-finder-0010
+        - tsr-finder-0011
+        - tsr-finder-0012
+
+      target_state_record_ids:
+        - tsr-verifier-0004
+
+      mapping_type: many_to_one
+      preservation_status: intentionally_transformed
+
+      description: >
+        Three Finder discovery states are compressed into one Verifier
+        intake state containing verification targets and retained
+        uncertainty.
+
+      evidence_refs:
+        - handoff-package-finder-verifier-004
+
+  structure_mappings:
+    - mapping_id: structure-map-001
+
+      source_structure_ids:
+        - candidate-source-alpha
+        - candidate-source-beta
+        - candidate-source-gamma
+
+      target_structure_ids:
+        - verification-target-group-004
+
+      translation_operation: role_adaptation
+      preservation_status: function_preserved
+
+      description: >
+        Finder candidate sources are translated into a grouped
+        verification target set.
+
+      evidence_refs:
+        - trace-finder-candidates-004
+
+    - mapping_id: structure-map-002
+
+      source_structure_ids:
+        - unresolved-source-conflict-beta
+
+      target_structure_ids:
+        - verifier-conflict-check-004
+
+      translation_operation: specialization
+      preservation_status: meaning_preserved
+
+      description: >
+        An unresolved source conflict is translated into an explicit
+        verification task without changing its unresolved status.
+
+      evidence_refs:
+        - trace-source-conflict-beta
+
+    - mapping_id: structure-map-003
+
+      source_structure_ids:
+        - finder-low-confidence-candidate-gamma
+
+      target_structure_ids:
+        - verifier-low-priority-target-gamma
+
+      translation_operation: priority_reordering
+      preservation_status: meaning_preserved
+
+      description: >
+        A low-confidence discovery candidate remains available for
+        verification but is moved below stronger candidates.
+
+      evidence_refs:
+        - trace-candidate-gamma-confidence
+
+  precedence_mappings:
+    - mapping_id: precedence-map-001
+
+      source_edge_ids:
+        - finder-edge-alpha-before-beta-review
+        - finder-edge-conflict-before-verification-request
+
+      target_relation_refs:
+        - verifier-relation-context-before-conflict-check
+
+      preservation_status: meaning_preserved
+
+      description: >
+        The Verifier receives the relevant ordering relation that the
+        conflict was identified before the verification task was created.
+
+      evidence_refs:
+        - spg-finder-0001
+
+continuity_transfer:
+  transferred_items:
+    - transfer_id: continuity-transfer-001
+      source_item_id: unresolved-source-conflict-beta
+      target_item_id: verifier-conflict-check-004
+      transfer_type: unresolved_item
+      status_preservation: preserved
+
+      description: >
+        The source conflict remains unresolved after transfer.
+
+    - transfer_id: continuity-transfer-002
+      source_item_id: continuity-verify-alpha
+      target_item_id: verifier-request-alpha
+      transfer_type: verification_request
+      status_preservation: translated
+
+      description: >
+        Finder's verification intent is translated into an explicit
+        Verifier task.
+
+    - transfer_id: continuity-transfer-003
+      source_item_id: human-review-if-conflict-persists
+      target_item_id: verifier-human-gate-condition-004
+      transfer_type: human_review_request
+      status_preservation: preserved
+
+      description: >
+        The human-review condition remains active if the source conflict
+        cannot be resolved.
+
+  deferred_items:
+    - source_item_id: low-priority-background-candidate-delta
+      reason: >
+        The candidate is outside the current verification budget and does
+        not affect the primary verification path.
+      recommended_target_role: background-review-wing
+
+  rejected_items: []
+
+translation_losses:
+  - loss_id: loss-001
+    loss_type: temporal_precision
+    severity: low
+
+    description: >
+      Three Finder micro-state intervals are compressed into a single
+      Verifier intake event.
+
+    accepted: true
+
+    mitigation: >
+      Original Finder state and transition references remain attached to
+      the handoff package.
+
+    evidence_refs:
+      - tsr-finder-0010
+      - tsr-finder-0011
+      - tsr-finder-0012
+
+  - loss_id: loss-002
+    loss_type: role_context
+    severity: negligible
+
+    description: >
+      Some discovery-specific ranking metadata is not used by the
+      Verifier's claim-evidence interface.
+
+    accepted: true
+
+    mitigation: >
+      Raw ranking references remain available through source trace links.
+
+    evidence_refs:
+      - trace-finder-ranking-004
+
+handoff_package:
+  package_id: handoff-package-finder-verifier-004
+  delivery_status: accepted
+
+  included_refs:
+    - tsr-finder-0012
+    - stm-finder-0011-0012
+    - spg-finder-0001
+    - trace-finder-candidates-004
+    - trace-source-conflict-beta
+    - verifier-request-alpha
+
+  acceptance_required: true
+  accepted_by: verifier-wing
+  accepted_at: "2026-07-10T18:33:55Z"
+
+  notes: >
+    Package accepted with explicit retention of unresolved source conflict
+    and human-review escalation condition.
+
+observation:
+  basis: hybrid
+  confidence: 0.9
+  translation_method: model_assisted
+
+  evidence_refs:
+    - handoff-package-finder-verifier-004
+    - spg-finder-0001
+    - trace-source-conflict-beta
+
+  limitations:
+    - >
+      Translation preserves selected structural relations but does not
+      claim internal-state equivalence between Finder and Verifier.
+    - >
+      Local clock positions are aligned by handoff events and are not
+      synchronized.
+    - >
+      Translation receipt does not prove that transferred structures
+      caused later Verifier decisions.
+    - >
+      Some low-level Finder state changes are intentionally compressed.
+
+audit:
+  created_by: structural-translator-wing
+  human_review_required: true
+  review_status: pending
+  causal_claims_permitted: false
+
+  notes: >
+    Initial Cross-Agent Temporal Translation example for v0.4 validation.
