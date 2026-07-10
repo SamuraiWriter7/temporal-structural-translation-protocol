@@ -17,13 +17,21 @@ ROOT = Path(__file__).resolve().parent.parent
 VALIDATION_TARGETS = [
     {
         "name": "Temporal State Record",
-        "schema": ROOT / "schemas" / "temporal-state-record.schema.json",
-        "example": ROOT / "examples" / "temporal-state-record.example.yaml",
+        "schema": ROOT
+        / "schemas"
+        / "temporal-state-record.schema.json",
+        "example": ROOT
+        / "examples"
+        / "temporal-state-record.example.yaml",
     },
     {
         "name": "State Transition Map",
-        "schema": ROOT / "schemas" / "state-transition-map.schema.json",
-        "example": ROOT / "examples" / "state-transition-map.example.yaml",
+        "schema": ROOT
+        / "schemas"
+        / "state-transition-map.schema.json",
+        "example": ROOT
+        / "examples"
+        / "state-transition-map.example.yaml",
     },
     {
         "name": "Structural Precedence Graph",
@@ -34,6 +42,15 @@ VALIDATION_TARGETS = [
         / "examples"
         / "structural-precedence-graph.example.yaml",
     },
+    {
+        "name": "Cross-Agent Temporal Translation",
+        "schema": ROOT
+        / "schemas"
+        / "cross-agent-temporal-translation.schema.json",
+        "example": ROOT
+        / "examples"
+        / "cross-agent-temporal-translation.example.yaml",
+    },
 ]
 
 
@@ -42,11 +59,14 @@ def load_json(path: Path) -> dict[str, Any]:
         with path.open("r", encoding="utf-8") as file:
             data = json.load(file)
     except FileNotFoundError as exc:
-        raise RuntimeError(f"File not found: {path}") from exc
+        raise RuntimeError(
+            f"File not found: {path}"
+        ) from exc
     except json.JSONDecodeError as exc:
         raise RuntimeError(
             f"Invalid JSON in {path}: "
-            f"line {exc.lineno}, column {exc.colno}"
+            f"line {exc.lineno}, "
+            f"column {exc.colno}"
         ) from exc
 
     if not isinstance(data, dict):
@@ -62,7 +82,9 @@ def load_yaml(path: Path) -> Any:
         with path.open("r", encoding="utf-8") as file:
             return yaml.safe_load(file)
     except FileNotFoundError as exc:
-        raise RuntimeError(f"File not found: {path}") from exc
+        raise RuntimeError(
+            f"File not found: {path}"
+        ) from exc
     except yaml.YAMLError as exc:
         raise RuntimeError(
             f"Invalid YAML in {path}: {exc}"
@@ -85,8 +107,14 @@ def validate_target(
     example_path: Path,
 ) -> bool:
     print(f"[validate] {name}")
-    print(f"  schema : {schema_path.relative_to(ROOT)}")
-    print(f"  example: {example_path.relative_to(ROOT)}")
+    print(
+        f"  schema : "
+        f"{schema_path.relative_to(ROOT)}"
+    )
+    print(
+        f"  example: "
+        f"{example_path.relative_to(ROOT)}"
+    )
 
     schema = load_json(schema_path)
     example = load_yaml(example_path)
@@ -109,11 +137,16 @@ def validate_target(
     if errors:
         for error in errors:
             path = format_error_path(error)
-            print(f"[error] {path}: {error.message}")
+            print(
+                f"[error] {path}: "
+                f"{error.message}"
+            )
 
         return False
 
-    print(f"[ok] {example_path.name} is valid")
+    print(
+        f"[ok] {example_path.name} is valid"
+    )
     return True
 
 
@@ -134,7 +167,10 @@ def main() -> int:
                 target["example"],
             )
         except Exception as exc:
-            print(f"[fatal] {target['name']}: {exc}")
+            print(
+                f"[fatal] "
+                f"{target['name']}: {exc}"
+            )
             valid = False
 
         all_valid = all_valid and valid
