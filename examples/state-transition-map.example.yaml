@@ -1,0 +1,140 @@
+schema_version: "0.2.0"
+record_type: state_transition_map
+
+transition_map_id: stm-2026-0001
+workspace_id: temporal-workspace-alpha
+
+subject:
+  subject_id: structural-translator-wing
+  subject_type: wing
+  role: structural_translation
+  implementation: model-independent
+
+source_state:
+  state_record_id: tsr-2026-0001
+  sequence_index: 0
+  logical_time: "t0"
+  observed_at: "2026-07-10T18:18:41Z"
+
+target_state:
+  state_record_id: tsr-2026-0002
+  sequence_index: 1
+  logical_time: "t1"
+  observed_at: "2026-07-10T18:25:51Z"
+
+transition_window:
+  opened_at: "2026-07-10T18:18:41Z"
+  closed_at: "2026-07-10T18:25:51Z"
+  logical_interval: "t0->t1"
+  duration_ms: 430000
+
+trigger_context:
+  trigger_type: human_feedback
+  trigger_refs:
+    - user-request-v0.2
+  description: >
+    The human participant requested progression from temporal state
+    representation to explicit state transition mapping.
+  trigger_claim_scope: context_only
+
+change_set:
+  introduced:
+    - change_id: change-introduced-001
+      target_structure_id: structure-state-transition-map
+      description: >
+        A new structural layer was introduced to represent differences
+        between consecutive temporal state records.
+      origin_refs:
+        - origin-v0.2-state-transition-map
+      evidence_refs:
+        - trace-v0.2-design-001
+
+  preserved:
+    - change_id: change-preserved-001
+      source_structure_id: structure-structural-translation
+      target_structure_id: structure-structural-translation
+      preservation_level: meaning_preserved
+      description: >
+        Structural translation remains a core bridge between heterogeneous
+        structural representations.
+      evidence_refs:
+        - trace-structural-translation-001
+
+    - change_id: change-preserved-002
+      source_structure_id: structure-temporal-workspace
+      target_structure_id: structure-temporal-workspace
+      preservation_level: function_preserved
+      description: >
+        The temporal workspace remains the lifecycle context in which
+        ordered state records are compared.
+      evidence_refs:
+        - trace-temporal-workspace-001
+
+  transformed:
+    - change_id: change-transformed-001
+      source_structure_ids:
+        - structure-temporal-causality
+      target_structure_ids:
+        - structure-state-transition-map
+      operation: specialization
+      description: >
+        The broad temporal causality concept was narrowed into a concrete
+        state-transition mapping layer that records observable change
+        without yet asserting causality.
+      meaning_retention: high
+      evidence_refs:
+        - trace-v0.2-design-001
+
+  retired: []
+
+  split: []
+
+  merged: []
+
+continuity_resolution:
+  resolved_candidates:
+    - candidate_id: continuity-001
+      resolution: preserved
+      resulting_structure_ids:
+        - structure-temporal-workspace
+      description: >
+        The temporal workspace concept was preserved as the parent context
+        for state comparison.
+
+    - candidate_id: continuity-002
+      resolution: transformed
+      resulting_structure_ids:
+        - structure-state-transition-map
+      description: >
+        The earlier temporal causality concept was partially operationalized
+        as an explicit transition mapping layer.
+
+  still_open_candidates:
+    - candidate_id: unresolved-cross-agent-clock
+      status: deferred
+      description: >
+        Cross-agent temporal alignment remains outside the scope of v0.2.
+
+observation:
+  basis: hybrid
+  confidence: 0.88
+  comparison_method: model_assisted
+  evidence_refs:
+    - trace-v0.2-design-001
+    - trace-temporal-workspace-001
+  limitations:
+    - >
+      The transition map describes structural differences between two
+      recorded states and does not prove causal relationships.
+    - >
+      Trigger context is recorded as context and does not establish that
+      the trigger caused every mapped change.
+    - >
+      Cross-agent temporal synchronization is not defined in this version.
+
+audit:
+  created_by: structural-translator
+  human_review_required: true
+  review_status: pending
+  notes: >
+    Initial State Transition Map example for v0.2 validation.
