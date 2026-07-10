@@ -51,6 +51,15 @@ VALIDATION_TARGETS = [
         / "examples"
         / "cross-agent-temporal-translation.example.yaml",
     },
+    {
+        "name": "Temporal Causality Receipt",
+        "schema": ROOT
+        / "schemas"
+        / "temporal-causality-receipt.schema.json",
+        "example": ROOT
+        / "examples"
+        / "temporal-causality-receipt.example.yaml",
+    },
 ]
 
 
@@ -147,6 +156,7 @@ def validate_target(
     print(
         f"[ok] {example_path.name} is valid"
     )
+
     return True
 
 
