@@ -1,0 +1,337 @@
+schema_version: "0.3.0"
+record_type: structural_precedence_graph
+
+precedence_graph_id: spg-2026-0001
+workspace_id: temporal-workspace-alpha
+
+subject:
+  subject_id: structural-translator-wing
+  subject_type: wing
+  role: temporal_structural_translation
+  implementation: model-independent
+
+graph_scope:
+  scope_type: multi_transition
+
+  source_state_record_ids:
+    - tsr-2026-0001
+
+  target_state_record_ids:
+    - tsr-2026-0002
+    - tsr-2026-0003
+
+  transition_map_refs:
+    - stm-2026-0001
+    - stm-2026-0002
+
+  sequence_start: 0
+  sequence_end: 2
+
+  description: >
+    Precedence graph covering the development from the Temporal Workspace
+    hypothesis through transition mapping to explicit structural precedence
+    representation.
+
+nodes:
+  - node_id: node-temporal-workspace
+    structure_id: structure-temporal-workspace
+    node_type: active_structure
+
+    temporal_position:
+      sequence_index: 0
+      logical_time: "t0"
+      observed_at: "2026-07-10T18:18:41Z"
+
+    label: Temporal Workspace Hypothesis
+
+    summary: >
+      A temporal workspace is represented as an ordered sequence of
+      externally representable structural states.
+
+    state_record_refs:
+      - tsr-2026-0001
+
+    trace_refs:
+      - trace-temporal-workspace-001
+
+    origin_refs:
+      - origin-temporal-workspace-question
+
+  - node_id: node-structural-translation
+    structure_id: structure-structural-translation
+    node_type: active_structure
+
+    temporal_position:
+      sequence_index: 0
+      logical_time: "t0"
+      observed_at: "2026-07-10T18:18:41Z"
+
+    label: Structural Translation Layer
+
+    summary: >
+      Structural translation preserves representable meaning and dependency
+      across heterogeneous structural systems.
+
+    state_record_refs:
+      - tsr-2026-0001
+
+    trace_refs:
+      - trace-structural-translation-001
+
+    origin_refs:
+      - origin-structural-translator
+
+  - node_id: node-transition-map
+    structure_id: structure-state-transition-map
+    node_type: transition_result
+
+    temporal_position:
+      sequence_index: 1
+      logical_time: "t1"
+      observed_at: "2026-07-10T18:25:51Z"
+
+    label: State Transition Map
+
+    summary: >
+      An explicit layer for mapping introduced, preserved, transformed,
+      retired, split, and merged structures between temporal states.
+
+    state_record_refs:
+      - tsr-2026-0002
+
+    trace_refs:
+      - trace-v0.2-design-001
+
+    origin_refs:
+      - origin-v0.2-state-transition-map
+
+  - node_id: node-precedence-question
+    structure_id: structure-precedence-question
+    node_type: unresolved_item
+
+    temporal_position:
+      sequence_index: 1
+      logical_time: "t1"
+
+    label: Structural Precedence Question
+
+    summary: >
+      The transition map can show what changed, but not which structures
+      formed necessary temporal or structural antecedents for later
+      structures.
+
+    state_record_refs:
+      - tsr-2026-0002
+
+    trace_refs:
+      - trace-precedence-question-001
+
+  - node_id: node-precedence-graph
+    structure_id: structure-structural-precedence-graph
+    node_type: transition_result
+
+    temporal_position:
+      sequence_index: 2
+      logical_time: "t2"
+      observed_at: "2026-07-10T18:30:13Z"
+
+    label: Structural Precedence Graph
+
+    summary: >
+      A graph representation for structural antecedence, inheritance,
+      preparation, framing, constraint, and enabling relations.
+
+    state_record_refs:
+      - tsr-2026-0003
+
+    trace_refs:
+      - trace-v0.3-design-001
+
+    origin_refs:
+      - origin-v0.3-structural-precedence-graph
+
+edges:
+  - edge_id: edge-001
+    source_node_id: node-temporal-workspace
+    target_node_id: node-transition-map
+    relation_type: structurally_prepares
+    precedence_basis: state_sequence
+    strength: strong
+    confidence: 0.92
+    causal_status: not_claimed
+
+    description: >
+      The temporal workspace concept established the state sequence needed
+      before state-to-state differences could be mapped.
+
+    evidence_refs:
+      - trace-temporal-workspace-001
+      - trace-v0.2-design-001
+
+  - edge_id: edge-002
+    source_node_id: node-structural-translation
+    target_node_id: node-transition-map
+    relation_type: contextually_frames
+    precedence_basis: declared_dependency
+    strength: strong
+    confidence: 0.89
+    causal_status: not_claimed
+
+    description: >
+      Structural translation provided the interpretive frame in which
+      state changes were treated as transformations of representable
+      structures rather than raw hidden-state extraction.
+
+    evidence_refs:
+      - trace-structural-translation-001
+      - trace-v0.2-design-001
+
+  - edge_id: edge-003
+    source_node_id: node-transition-map
+    target_node_id: node-precedence-question
+    relation_type: structurally_prepares
+    precedence_basis: transition_map
+    strength: strong
+    confidence: 0.94
+    causal_status: candidate
+
+    description: >
+      Once state differences were mapped, the unresolved question of
+      structural antecedence became explicitly representable.
+
+    evidence_refs:
+      - stm-2026-0001
+      - trace-precedence-question-001
+
+  - edge_id: edge-004
+    source_node_id: node-precedence-question
+    target_node_id: node-precedence-graph
+    relation_type: is_refined_into
+    precedence_basis: trace_sequence
+    strength: strong
+    confidence: 0.96
+    causal_status: candidate
+
+    description: >
+      The unresolved question about antecedence was refined into a graph
+      model for representing structural precedence relations.
+
+    evidence_refs:
+      - trace-precedence-question-001
+      - trace-v0.3-design-001
+
+  - edge_id: edge-005
+    source_node_id: node-transition-map
+    target_node_id: node-precedence-graph
+    relation_type: enables
+    precedence_basis: hybrid
+    strength: strong
+    confidence: 0.91
+    causal_status: candidate
+
+    description: >
+      Transition mapping supplies comparable change observations that make
+      later precedence analysis possible.
+
+    evidence_refs:
+      - stm-2026-0001
+      - trace-v0.3-design-001
+
+path_observations:
+  - path_id: path-developmental-001
+
+    node_path:
+      - node-temporal-workspace
+      - node-transition-map
+      - node-precedence-question
+      - node-precedence-graph
+
+    path_type: developmental
+
+    description: >
+      The protocol developed from representing temporal states, to mapping
+      state differences, to exposing a question about antecedence, and
+      finally to representing structural precedence explicitly.
+
+    confidence: 0.91
+
+    evidence_refs:
+      - trace-temporal-workspace-001
+      - trace-v0.2-design-001
+      - trace-precedence-question-001
+      - trace-v0.3-design-001
+
+  - path_id: path-translation-frame-001
+
+    node_path:
+      - node-structural-translation
+      - node-transition-map
+      - node-precedence-graph
+
+    path_type: translation
+
+    description: >
+      The structural translation concept frames both state-change mapping
+      and precedence representation as translations of observable
+      structural relations.
+
+    confidence: 0.87
+
+    evidence_refs:
+      - trace-structural-translation-001
+      - trace-v0.3-design-001
+
+graph_summary:
+  primary_precedence_findings:
+    - >
+      Temporal state representation structurally preceded explicit
+      state-transition mapping.
+    - >
+      State-transition mapping structurally preceded explicit precedence
+      analysis.
+    - >
+      Structural translation provided an interpretive frame across all
+      three protocol layers.
+
+  unresolved_precedence_questions:
+    - >
+      Whether some observed precedence relations constitute genuine causal
+      dependencies remains unresolved.
+    - >
+      Cross-agent precedence cannot yet be compared without translation
+      and clock-alignment rules.
+    - >
+      Long-range precedence across discontinuous state sequences requires
+      additional evidence rules.
+
+  candidate_causal_paths:
+    - path-developmental-001
+
+observation:
+  basis: hybrid
+  confidence: 0.91
+  construction_method: model_assisted
+
+  evidence_refs:
+    - tsr-2026-0001
+    - stm-2026-0001
+    - trace-v0.3-design-001
+
+  limitations:
+    - >
+      Temporal or structural precedence alone does not prove causality.
+    - >
+      Edge confidence expresses confidence in the mapped precedence
+      relation, not causal strength.
+    - >
+      Candidate causal paths require later causal review.
+    - >
+      This version does not synchronize independent agent clocks.
+
+audit:
+  created_by: structural-translator
+  human_review_required: true
+  review_status: pending
+
+  notes: >
+    Initial Structural Precedence Graph example for v0.3 validation.
