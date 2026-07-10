@@ -1,0 +1,690 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/temporal-causality-receipt.schema.json",
+  "title": "Temporal Causality Receipt",
+  "description": "A model-independent receipt for recording bounded causal claims over temporal structural evolution, including supporting evidence, counterevidence, alternatives, scope, confidence, and review status.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "causality_receipt_id",
+    "workspace_id",
+    "subject",
+    "claim_scope",
+    "causal_claims",
+    "evidence_binding",
+    "alternative_explanations",
+    "counterevidence",
+    "scope_boundary",
+    "causal_assessment",
+    "review",
+    "audit"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.5.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "temporal_causality_receipt"
+    },
+    "causality_receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "claim_scope": {
+      "$ref": "#/$defs/claimScope"
+    },
+    "causal_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/causalClaim"
+      }
+    },
+    "evidence_binding": {
+      "$ref": "#/$defs/evidenceBinding"
+    },
+    "alternative_explanations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/alternativeExplanation"
+      }
+    },
+    "counterevidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/counterevidenceItem"
+      }
+    },
+    "scope_boundary": {
+      "$ref": "#/$defs/scopeBoundary"
+    },
+    "causal_assessment": {
+      "$ref": "#/$defs/causalAssessment"
+    },
+    "review": {
+      "$ref": "#/$defs/review"
+    },
+    "audit": {
+      "$ref": "#/$defs/audit"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Optional implementation-specific extensions.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "subject_type"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_type": {
+          "type": "string",
+          "enum": [
+            "model",
+            "agent",
+            "wing",
+            "system",
+            "human_ai_loop",
+            "multi_agent_group",
+            "cross_system",
+            "other"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation": {
+          "type": "string"
+        }
+      }
+    },
+    "claimScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_type",
+        "outcome_refs",
+        "temporal_range"
+      ],
+      "properties": {
+        "scope_type": {
+          "type": "string",
+          "enum": [
+            "single_transition",
+            "multi_transition",
+            "single_agent_lifecycle",
+            "cross_agent_lifecycle",
+            "cross_system_lifecycle",
+            "other"
+          ]
+        },
+        "outcome_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "temporal_range": {
+          "$ref": "#/$defs/temporalRange"
+        },
+        "state_record_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "transition_map_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "precedence_graph_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "translation_record_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "temporalRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_ref",
+        "end_ref"
+      ],
+      "properties": {
+        "start_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "end_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "logical_range": {
+          "type": "string"
+        }
+      }
+    },
+    "causalClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "candidate_cause_refs",
+        "outcome_refs",
+        "claim_type",
+        "claim_strength",
+        "status",
+        "statement"
+      ],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidate_cause_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "outcome_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "claim_type": {
+          "type": "string",
+          "enum": [
+            "contributory",
+            "enabling",
+            "constraining",
+            "mediating",
+            "triggering",
+            "necessary_candidate",
+            "sufficient_candidate",
+            "joint_contribution",
+            "other"
+          ]
+        },
+        "claim_strength": {
+          "type": "string",
+          "enum": [
+            "weak",
+            "moderate",
+            "strong",
+            "undetermined"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "supported",
+            "contested",
+            "partially_supported",
+            "rejected",
+            "inconclusive"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mechanism_summary": {
+          "type": "string"
+        },
+        "scope_notes": {
+          "type": "string"
+        }
+      }
+    },
+    "evidenceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bindings"
+      ],
+      "properties": {
+        "bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceBindingItem"
+          }
+        },
+        "overall_completeness": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "partial",
+            "substantial",
+            "comprehensive",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "evidenceBindingItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "claim_id",
+        "evidence_type",
+        "evidence_refs",
+        "support_direction",
+        "relevance",
+        "confidence"
+      ],
+      "properties": {
+        "binding_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_type": {
+          "type": "string",
+          "enum": [
+            "state_evidence",
+            "transition_evidence",
+            "precedence_evidence",
+            "translation_evidence",
+            "trace_evidence",
+            "external_evidence",
+            "human_testimony",
+            "telemetry",
+            "intervention_evidence",
+            "counterfactual_evidence",
+            "other"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "support_direction": {
+          "type": "string",
+          "enum": [
+            "supports",
+            "weakens",
+            "neutral",
+            "mixed"
+          ]
+        },
+        "relevance": {
+          "type": "string",
+          "enum": [
+            "direct",
+            "indirect",
+            "contextual",
+            "unknown"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "alternativeExplanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alternative_id",
+        "statement",
+        "plausibility",
+        "status"
+      ],
+      "properties": {
+        "alternative_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidate_factor_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "plausibility": {
+          "type": "string",
+          "enum": [
+            "low",
+            "moderate",
+            "high",
+            "unknown"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "partially_addressed",
+            "addressed",
+            "unresolved"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "counterevidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "counterevidence_id",
+        "claim_id",
+        "description",
+        "severity",
+        "resolution_status"
+      ],
+      "properties": {
+        "counterevidence_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "moderate",
+            "high",
+            "critical"
+          ]
+        },
+        "resolution_status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "partially_resolved",
+            "resolved",
+            "accepted_limitation",
+            "disputed"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "resolution_notes": {
+          "type": "string"
+        }
+      }
+    },
+    "scopeBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permitted_claims",
+        "prohibited_inferences",
+        "generalization_status"
+      ],
+      "properties": {
+        "permitted_claims": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prohibited_inferences": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "precedence_implies_causation",
+              "translation_implies_influence",
+              "correlation_implies_causation",
+              "contribution_implies_necessity",
+              "contribution_implies_sufficiency",
+              "local_claim_implies_global_claim",
+              "single_path_implies_exclusive_path",
+              "absence_of_counterevidence_implies_proof",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "generalization_status": {
+          "type": "string",
+          "enum": [
+            "local_only",
+            "bounded",
+            "tentatively_generalizable",
+            "generalizable_with_review",
+            "unknown"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "causalAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overall_status",
+        "confidence",
+        "evidence_sufficiency",
+        "alternative_explanations_status"
+      ],
+      "properties": {
+        "overall_status": {
+          "type": "string",
+          "enum": [
+            "unsupported",
+            "weakly_supported",
+            "moderately_supported",
+            "strongly_supported",
+            "contested",
+            "inconclusive"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_sufficiency": {
+          "type": "string",
+          "enum": [
+            "insufficient",
+            "limited",
+            "adequate",
+            "substantial",
+            "unknown"
+          ]
+        },
+        "alternative_explanations_status": {
+          "type": "string",
+          "enum": [
+            "not_assessed",
+            "open",
+            "partially_addressed",
+            "substantially_addressed",
+            "unresolved"
+          ]
+        },
+        "assessment_summary": {
+          "type": "string"
+        },
+        "recommended_next_action": {
+          "type": "string",
+          "enum": [
+            "accept_bounded_claim",
+            "collect_more_evidence",
+            "perform_intervention_test",
+            "perform_counterfactual_analysis",
+            "human_review",
+            "reject_claim",
+            "defer",
+            "other"
+          ]
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "human_review_required",
+        "review_status"
+      ],
+      "properties": {
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "pending",
+            "approved",
+            "approved_with_limits",
+            "rejected",
+            "needs_more_evidence"
+          ]
+        },
+        "reviewer_role": {
+          "type": "string"
+        },
+        "review_notes": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "created_by",
+        "created_at",
+        "receipt_finality"
+      ],
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "receipt_finality": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "provisional",
+            "reviewed",
+            "final",
+            "superseded"
+          ]
+        },
+        "supersedes_receipt_id": {
+          "type": "string"
+        },
+        "trace_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
